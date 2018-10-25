@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
     <script src="jquery-3.3.1uncomp.js" type="text/javascript"></script>
     <script src="books_client.js" type="text/javascript"></script>
 </head>
 <body>
-    <table>
-        <tbody>
-
-        </tbody>
-    </table>
+    <fieldset>
+        <legend>Add new book: </legend>
+        <form id="add-form" action="" method="post">
+            <label>Author:
+                <input class="book-data" type="text" name="author" maxlength="200" required>
+            </label><br>
+            <label>Title:
+                <input class="book-data" type="text" name="title" maxlength="200" required>
+            </label><br>
+            <label>ISBN:
+                <input class="book-data" type="text" name="isbn" maxlength="17" required><!--todo isbn validation-->
+            </label><br>
+            <label>Publisher:
+                <input class="book-data" type="text" name="publisher" maxlength="200" required>
+            </label><br>
+            <label>Genre:
+                <select class="book-data" name="genre" required>
+                    <option value="1">Romans</option>
+                    <option value="2">Obyczajowa</option>
+                    <option value="3">Sci-fi i fantasy</option>
+                    <option value="4">Literatura faktu</option>
+                    <option value="5">Popularnonaukowa</option>
+                    <option value="6">Poradnik</option>
+                    <option value="7">Kryminał, sensacja</option>
+                </select>
+            </label><br>
+            <button name="submit" type="submit">Add</button>
+            <div id="message"></div>
+        </form>
+    </fieldset>
 </body>
 </html>
