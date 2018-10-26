@@ -2,6 +2,10 @@
     font-weight: bold;
 }
 
+.delete-a {
+    color: red;
+}
+
 .main-div {
     font-weight: initial;
     display: none;
