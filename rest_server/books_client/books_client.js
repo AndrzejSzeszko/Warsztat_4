@@ -8,21 +8,25 @@ $(document).ready(function() {
         data: '',
         type: 'GET',
         dataType: 'json',
-    }).done(function(result) {
-        for (let elem of result) {
+    }).done(displayBooks);
+
+    addingForm.on('submit', addBook);
+
+
+    function displayBooks(listOfBooks) {
+        for (let elem of listOfBooks) {
             let p = $('<p>', {id: elem.id, class: "main-p", title: elem.title});
+            let a = $('<a>', {id: elem.id, class: "delete-a"});
             let div = $('<div>', {class: "main-div"});
 
             p.text(`${elem.id}) ${elem.title}`);
-            p.append(div);
+            a.text(' delete');
+            p.append(a).append(div);
             body.append(p);
-            p.on('click', unfoldDiv)
+            p.on('click', unfoldDiv);
+            a.on('click', deleteBook);
         }
-    }).fail(function(xhr, status, err) {
-
-    });
-
-    addingForm.on('submit', addBook);
+    }
 
 
     function unfoldDiv() {
@@ -56,15 +60,34 @@ $(document).ready(function() {
             data: $(this).serialize(),
             type: 'POST',
             dataType: 'json'
-        }).done(function(response){
-            let message = $('#message');
-            message.text('Book has been successfully added to database.');
-            setTimeout(function() {
-                message.fadeOut(4000);
-            }, 500);
+        }).done(function(result){
+            alert('Book has been successfully added to database.');
+            displayBooks([result]);
         }).fail(function(xhr, status, err){
             alert('At least one of input data is invalid.');
         });
+    }
+
+
+    function deleteBook(event) {
+        event.stopPropagation();
+        let deleteLink = $(this);
+        let confirmation = confirm(`Do you really want to delete this book (ID: ${deleteLink.attr('id')}) from database?`);
+
+        if (confirmation) {
+           $.ajax({
+            url: `http://127.0.0.1:8000/book/${deleteLink.attr('id')}`,
+            data: '',
+            type: 'DELETE',
+            dataType: 'json'
+            }).done(function() {
+                deleteLink.parent().remove();
+                alert('Book has been successfully removed from database.');
+            }).fail(function(xhr, status, err){
+                alert('At least one of input data is invalid.');
+            });
+        }
+
     }
 
 });
