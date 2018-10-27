@@ -16,8 +16,8 @@ $(document).ready(function() {
 
     function displayBooks(arrayOfBooks) {
         for (let book of arrayOfBooks) {
-            let p = $('<p>', {id: book.id, class: "main-p", 'data-method': 'GET'});
-            let a = $('<a>', {id: book.id, class: "delete-a", 'data-method': 'DELETE'});
+            let p = $('<p>', {class: "main-p", 'data-book-id': book.id, 'data-method': 'GET'});
+            let a = $('<a>', {class: "delete-a", 'data-book-id': book.id, 'data-method': 'DELETE'});
             let div = $('<div>', {class: "main-div"});
 
             p.html(`<strong>${book.id}) ${book.title}</strong>`);
@@ -26,7 +26,6 @@ $(document).ready(function() {
             contentDiv.append(p);
             p.find('strong').on('click', unfoldDiv);
             a.on('click', deleteBook);
-            div.on('click', function(event) {event.stopPropagation()})
         }
     }
 
@@ -38,7 +37,7 @@ $(document).ready(function() {
 
     function unfoldDiv() {
         let mainDiv = $(this).siblings('div');
-        let bookId = $(this).parent().attr('id');
+        let bookId = $(this).parent().data('book-id');
 
         mainDiv.toggle();
 
@@ -78,11 +77,11 @@ $(document).ready(function() {
     function deleteBook(event) {
         event.stopPropagation();
         let deleteLink = $(this);
-        let confirmation = confirm(`Do you really want to delete this book (ID: ${deleteLink.attr('id')}) from database?`);
+        let confirmation = confirm(`Do you really want to delete this book (ID: ${deleteLink.data('book-id')}) from database?`);
 
         if (confirmation) {
            $.ajax({
-            url: `http://127.0.0.1:8000/book/${deleteLink.attr('id')}`,
+            url: `http://127.0.0.1:8000/book/${deleteLink.data('book-id')}`,
             data: '',
             type: 'DELETE',
             dataType: 'json'
