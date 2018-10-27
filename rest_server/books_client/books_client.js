@@ -1,43 +1,50 @@
 $(document).ready(function() {
 
-    let body = $('body');
     let addingForm = $('#add-form');
+    let contentDiv = $('#content');
 
-    $.ajax({
-        url: 'http://127.0.0.1:8000/book/',
-        data: '',
-        type: 'GET',
+    function genericAjax(bookId, data, type, doneFunc, failFunc){
+        $.ajax({
+        url: `http://127.0.0.1:8000/book/${bookId}`,
+        data: `${data}`,
+        type: `${type}`,
         dataType: 'json',
-    }).done(displayBooks);
+        }).done(doneFunc)
+          .fail(failFunc);
+    }
 
-    addingForm.on('submit', addBook);
 
-
-    function displayBooks(listOfBooks) {
-        for (let elem of listOfBooks) {
-            let p = $('<p>', {id: elem.id, class: "main-p", title: elem.title});
-            let a = $('<a>', {id: elem.id, class: "delete-a"});
+    function displayBooks(arrayOfBooks) {
+        for (let book of arrayOfBooks) {
+            let p = $('<p>', {id: book.id, class: "main-p", 'data-method': 'GET'});
+            let a = $('<a>', {id: book.id, class: "delete-a", 'data-method': 'DELETE'});
             let div = $('<div>', {class: "main-div"});
 
-            p.text(`${elem.id}) ${elem.title}`);
+            p.html(`<strong>${book.id}) ${book.title}</strong>`);
             a.text(' delete');
             p.append(a).append(div);
-            body.append(p);
-            p.on('click', unfoldDiv);
+            contentDiv.append(p);
+            p.find('strong').on('click', unfoldDiv);
             a.on('click', deleteBook);
+            div.on('click', function(event) {event.stopPropagation()})
         }
     }
 
 
+    function genericFail() {
+        alert('Something went wrong.');
+    }
+
+
     function unfoldDiv() {
-        let mainDiv = $(this).children('div');
-        let book_id = $(this).attr('id');
+        let mainDiv = $(this).siblings('div');
+        let bookId = $(this).parent().attr('id');
 
         mainDiv.toggle();
 
         if (mainDiv.children().length === 0) {
             $.ajax({
-            url: `http://127.0.0.1:8000/book/${$(this).attr('id')}`,
+            url: `http://127.0.0.1:8000/book/${bookId}`,
             data: '',
             type: 'GET',
             dataType: 'json'
@@ -48,7 +55,6 @@ $(document).ready(function() {
                 }
             });
         }
-
     }
 
 
@@ -87,7 +93,9 @@ $(document).ready(function() {
                 alert('At least one of input data is invalid.');
             });
         }
-
     }
+
+    genericAjax('', '', 'GET', displayBooks, genericFail);
+    addingForm.on('submit', addBook);
 
 });
