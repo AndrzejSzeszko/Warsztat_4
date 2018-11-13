@@ -65,7 +65,11 @@ $(document).ready(function() {
             for (let key in result) {
                     let div = $(`<div>${key}: ${result[key]}</div>`);
                     mainDiv.append(div);
-            };
+            }
+            let modify_span = $('<span>', {class: "modify-span", 'data-book-id': bookId, 'method': 'PATCH'});
+            modify_span.text('modify');
+            mainDiv.append(modify_span);
+
         }
 
         mainDiv.toggle();
