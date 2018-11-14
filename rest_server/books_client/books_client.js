@@ -16,7 +16,10 @@ $(document).ready(function() {
 
 
     function displayBooks(arrayOfBooks) {
-        for (let book of arrayOfBooks) {
+        let sortedArrayOfBooks = arrayOfBooks.sort(function(book1, book2){
+            return book1.id - book2.id;
+        });
+        for (let book of sortedArrayOfBooks) {
             let p = $('<p>');
             let strong = $('<strong>', {class: "main-strong", 'data-book-id': book.id, 'data-method': 'GET'});
             let a = $('<a>', {class: "delete-a", 'data-book-id': book.id, 'data-method': 'DELETE'});
@@ -33,7 +36,7 @@ $(document).ready(function() {
 
 
     function genericFail() {
-        alert('Something went wrong.');
+        alert('Something went wrong. Is server running?');
     }
 
 
@@ -65,7 +68,7 @@ $(document).ready(function() {
         function doneFunc (result) {
             for (let key in result) {
                 if (key !== 'id') {
-                    let div = $(`<div>`, {class: 'main-div-non-form-elem'});
+                    let div = $(`<div>`);
                     let key_span = $(`<span class="key-span" id=${bookId}>${key}: </span>`);
                     let value_span = $(`<span class="value-span" id=${bookId}>${result[key]}</span>`);
                     div.append(key_span, value_span);
@@ -73,7 +76,7 @@ $(document).ready(function() {
                 }
             }
 
-            let modifySpan = $('<span>', {class: "main-div-non-form-elem, modify-span", id: bookId, 'data-method': 'PUT'});
+            let modifySpan = $('<span>', {class: "modify-span", id: bookId, 'data-method': 'PUT'});
             modifySpan.text('modify');
             modifySpan.on('click', modifyBook);
             mainDiv.append(modifySpan);
@@ -131,10 +134,10 @@ $(document).ready(function() {
 
     function modifyBook(event) {
         let currentElem = $(this);
-        let mainDivNonFormElem = $('.main-div-non-form-elem');
+        let mainDivSubDivs = currentElem.siblings().filter('div');
         let currentForm = currentElem.siblings().filter('form');
 
-        mainDivNonFormElem.toggle();
+        mainDivSubDivs.toggle();
         currentElem.text(`${currentElem.text() === 'modify' ? 'cancel' : 'modify'}`);
         currentForm.toggle();
     }
@@ -144,16 +147,21 @@ $(document).ready(function() {
         event.preventDefault();
         let currentElem = $(this);
         let currentForm = currentElem.parent();
+        let mainDivSubDivs = currentForm.siblings().filter('div');
+        let modifySpan = currentForm.siblings().filter('.modify-span');
         let methodType = currentForm.data('method');
         let bookId = currentElem.attr('id');
 
         function doneFunc(result) {
             alert('Book has been successfully modified.');
+            mainDivSubDivs.toggle();
+            modifySpan.text(`${modifySpan.text() === 'modify' ? 'cancel' : 'modify'}`);
+            currentForm.toggle();
             // displayBooks([result]);
         }
 
         function failFunc() {
-            alert('At least one of input data is invalid in modifyed book.');
+            alert('At least one of input data is invalid in modifying form.');
         }
 
         genericAjax(bookId, currentForm.serialize(), methodType, doneFunc, failFunc)
