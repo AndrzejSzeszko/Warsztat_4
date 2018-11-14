@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     let addingForm = $('#add-form');
     let contentDiv = $('#content');
-    // let genres = ();
+
 
     function genericAjax(bookId, data, methodType, doneFunc, failFunc){
         $.ajax({
@@ -147,7 +147,7 @@ $(document).ready(function() {
     }
 
 
-    function modifyBook(event) {
+    function modifyBook() {
         let currentElem = $(this);
         let mainDivSubDivs = currentElem.siblings().filter('div');
         let currentForm = currentElem.siblings().filter('form');
