@@ -82,20 +82,35 @@ $(document).ready(function() {
             mainDiv.append(modifySpan);
 
             let currentForm = addingForm.clone(true)
-                .attr('data-method', 'PUT').addClass('modify-form');
+                .attr('data-method', 'PUT')
+                .addClass('modify-form');
             let submitButton = currentForm.find('button')
                 .attr('id', `${bookId}`)
                 .text('Save');
+
+            let resetButton = $('<button>', {id: bookId, 'name': 'reset','type': 'reset'});
+            resetButton.text('Reset');
+            submitButton.after(resetButton);
+
             let currentFormInputs = currentForm.find('.book-data');
             let detailsValuesSpans = modifySpan
                 .siblings()
                 .find('.value-span');
 
-            currentFormInputs.each(function(index) {
-                $(this).val(detailsValuesSpans.get(index).innerText);
-            });
+            function fillFormWithDefaults(currentFormInputs, detailsValuesSpans) {
+                currentFormInputs.each(function(index) {
+                    $(this).val(detailsValuesSpans.get(index).innerText);
+                });
+            }
+
+            fillFormWithDefaults(currentFormInputs, detailsValuesSpans);
 
             submitButton.on('click', saveModifications);
+
+            resetButton.on('click', function(event) {
+                event.preventDefault();
+                fillFormWithDefaults(currentFormInputs, detailsValuesSpans)
+            });
 
             modifySpan.before(currentForm);
         }
@@ -154,10 +169,19 @@ $(document).ready(function() {
 
         function doneFunc(result) {
             alert('Book has been successfully modified.');
+
+            mainDivSubDivs.each(function() {
+                $(this)
+                    .find('.value-span')
+                    .text(result[$(this)
+                        .find('.key-span')
+                        .text()
+                        .slice(0, -2)])
+            });
+
             mainDivSubDivs.toggle();
             modifySpan.text(`${modifySpan.text() === 'modify' ? 'cancel' : 'modify'}`);
             currentForm.toggle();
-            // displayBooks([result]);
         }
 
         function failFunc() {
